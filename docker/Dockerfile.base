@@ -1,6 +1,7 @@
 FROM  cyberdojofoundation/jq
 LABEL maintainer=jon@jaggersoft.com
 
-ADD verify-jq.sh /usr/bin/
+COPY verify-jq.sh /jq/
+ENV CLASSPATH=/jq/
 
 COPY red_amber_green.rb /usr/local/bin

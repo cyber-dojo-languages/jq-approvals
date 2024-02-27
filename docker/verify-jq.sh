@@ -1,5 +1,3 @@
-#!/bin/bash
-
 function find_test_files() {
     find . -name 'test_*.jq' | sort
 }
@@ -19,25 +17,33 @@ function verify_test_method() {
     local module=$1
     local test_method=$2
     local base="$module.$test_method"
-    echo "  $test_method" >&2
+    echo -n "$test_method:  " 
     local received=$(run_test_method $module $test_method)
-    local approved_file="$base.approved"
-    local received_file="$base.received"
-    echo "$received" >$received_file
-    if [ ! -f $approved_file ]; then
-        echo "  🚫 failed" >&2
-        echo "  $approved_file not found" >&2
-        echo "  received output is:" >&2
-        cat $received_file >&2
+    local approved_filename="$base.approved"
+    local received_filename="$base.received"
+    
+    echo "$received" >$received_filename
+    if [ ! -f $approved_filename ]; then
+        echo "failed " 
+        echo "$module.$test_method: Approved file $approved_filename not found" >&2
+        echo -n "  Received output is:" >&2
+        cat $received_filename >&2
+        exit 1
+    elif [ -z "$received" ]; then
+        echo "Compiling Error!" 
         exit 1
     else
-        if ! diff -u $approved_file $received_file; then
-            echo "  🚫 failed" >&2
-            eval "$DIFF_TOOL $received_file $approved_file"
+        local d=$(diff -u $approved_filename $received_filename)
+        if ! cmp -s $approved_filename $received_filename; then
+            echo "failed" 
+            echo "$module.$test_method:  " >&2
+            echo "----- DIFF -----" >&2
+            diff -u $approved_filename $received_filename >&2
+            echo "----------------" >&2
             exit 1
         else
-            echo "  ✅ passed" >&2
-            rm $received_file
+            echo "passed" 
+            rm $received_filename
         fi
     fi
 }
@@ -45,13 +51,13 @@ function verify_test_method() {
 function run_tests_in_file() {
     local file=$1
     local module=$(echo $file | sed 's/\.jq//' | sed 's/^\.\///')
-    echo "" >&2
-    echo $module >&2
-    echo "" >&2
+    echo "" 
+    echo -n "$module." 
+    #echo "" 
     local test_methods=$(test_methods_in_file $file)
     for test_method in $test_methods; do
         verify_test_method $module $test_method
-        echo "" >&2
+        echo "" 
     done
     echo "" >&2
 }
@@ -63,15 +69,9 @@ function run_tests() {
     done
 }
 
-function set_diff_tool() {
-    if [ -z "$DIFF_TOOL" ]; then
-        export DIFF_TOOL="true"
-    fi
-}
-
 function main() {
-    set_diff_tool
     run_tests
 }
 
 main
+
