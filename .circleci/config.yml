@@ -17,17 +17,17 @@ workflows:
           cron: "0 0 * * 1"
           filters:
             branches:
-              only: [ master ]
+              only: [ main ]
     jobs:
       - build-publish-trigger:
           context: cyberdojo-languages-context
           filters:
             branches:
-              only: [ master ]
+              only: [ main ]
   commit:
     jobs:
       - build-publish-trigger:
           context: cyberdojo-languages-context
           filters:
             branches:
-              only: [ master ]
+              only: [ main ]

@@ -1,4 +1,4 @@
-FROM  cyberdojofoundation/jq
+FROM  cyberdojofoundation/jq:84d24ef
 LABEL maintainer=jon@jaggersoft.com
 
 COPY verify-jq.sh /jq/
