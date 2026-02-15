@@ -1,4 +1,4 @@
-FROM ghcr.io/cyber-dojo-languages/jq:e7d41c8
+FROM ghcr.io/cyber-dojo-languages/jq:004190f
 LABEL maintainer=jon@jaggersoft.com
 
 COPY verify-jq.sh /jq/
