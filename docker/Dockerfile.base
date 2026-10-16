@@ -1,6 +1,8 @@
-FROM ghcr.io/cyber-dojo-languages/jq:0c81404
+FROM ghcr.io/cyber-dojo-languages/jq:2e95173
 LABEL maintainer=jon@jaggersoft.com
 
 COPY verify-jq.sh /jq/
 ENV CLASSPATH=/jq/
 
+COPY install.sh .
+RUN ./install.sh && rm ./install.sh
